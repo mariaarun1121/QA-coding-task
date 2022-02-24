@@ -1,0 +1,83 @@
+using System;
+
+namespace Test{
+
+  Public class TestURL{
+
+    Public static void MainTest(){
+        IWebDriver driver = new ChromeDriver();
+        
+        driver.Navigate().GoToURL("file:///C:/Users/Admin/AppData/Local/Temp/Rar$EXa0.494/index.html");
+        
+        TestCases TC = new TestCases();
+        TC.CheckMatchCase_Test1();
+        TC.SearchByName_Test2("Ala","Name");
+        TC.SelectFilterValueFromDropDown_Test3(Email);
+    }    
+  }
+  
+  Class TestCases{
+  
+    public static void CheckMatchCase_Test1(){
+      IWebElement matchCheckBox = driver.findelement(By.ID("//input[@id = 'match-case']"))
+      matchCheckBox.Click();
+      
+      Assert.IsTrue(matchCheckBox.Selected);
+    }
+    
+    public static void SearchByName_Test2(String dataToBeSearched, String searchByData){
+      driver.findelement(By.Name("search")).SendKeys(dataToBeSearched);
+      
+      Assert.IsTrue(ActualVsExpectedDataCheck(dataToBeSearched,searchByData));
+      
+      if(ActualVsExpectedDataCheck(dataToBeSearched,searchByData)){
+      Console.WriteLine("Data with searched name is filtered successfully");
+      }
+      else{
+      Console.WriteLine("Enetered data is not available or modify search condition");
+      }
+
+    }
+    
+  public static bool ActualVsExpectedDataCheck(var ExpectedValue, var colNameToBeSearched){
+      IWebElement table = driver.findelement(By.XPath("//table/tbody"));
+      
+      IList<IWebElement> rowData = table.FindElements(By.TagName("tr"));
+      int rowCount = rowData.Count;
+      
+      IList<IWebElement> colData = table.FindElements(By.TagName("td"));
+      int colCount = colData.Count;
+      
+      int colIndex;
+      bool result = true;
+      
+      if(colNameToBeSearched.Equals("Id")) {
+      colIndex = 1;
+      else if (colNameToBeSearched.Equals("Name"))
+      colIndex = 2;
+      else if(colNameToBeSearched.Equals("Email"))
+      colIndex = 3;
+      else If(colNameToBeSearched.Equals("City"))
+      colIndex = 4;
+      }
+      
+      for (int i = 1; i <= rowCount ; i++){
+          String ActualValue = driver.FindElement(By.XPath("//table/tbody/tr[" +i+ "]/td[" +colIndex+ "]")).Text.ToString();
+          
+          if (ActualValue.Contains(ExpectedValue)){
+          }
+          else {
+          return false;
+          }
+      }
+      return result;
+  }
+ 
+ Public static void SelectFilterValueFromDropDown_Test3(String ddSearchFilterValue){
+   var dropdown = driver.FindElement(By.XPath("//*[@id="search-column"]//*[@id="search-column"]"));
+   var selectElement = new SelectElement(dropdown);
+   selectElement.SelectByValue(ddSearchFilterValue);
+ }
+ 
+  }  
+}
